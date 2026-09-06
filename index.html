@@ -235,7 +235,13 @@
         }
       });
     }, { threshold: 0.15 });
-    document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
+    // Anything already in the first screen shows immediately — IntersectionObserver
+    // doesn't fire in a background tab (e.g. a link opened from Messenger), which
+    // would leave the hero blank until the tab is focused.
+    document.querySelectorAll('[data-animate]').forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('in-view');
+      else observer.observe(el);
+    });
 
     // Quote form: no backend needed — turns the form into a pre-filled text message.
     document.getElementById('quote-form').addEventListener('submit', (e) => {
